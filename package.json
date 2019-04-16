@@ -1,0 +1,18 @@
+{
+  "name": "ww2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "nodemon server/server",
+    "start": "node server/server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0",
+    "tumult": "^3.0.11"
+  }
+}
