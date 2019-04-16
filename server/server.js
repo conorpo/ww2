@@ -37,5 +37,5 @@ function updateClients(){
     io.emit("update", {players:players.map(player => ({x:player.x, y:player.y, mx:player.mx, my:player.my})), bullets: bullets});
 }
 
-const port = 3000
+const port = process.env.PORT;
 http.listen(port, () => console.log(`Example app listening on port ${port}!`))
