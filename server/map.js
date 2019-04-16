@@ -1,4 +1,4 @@
-const tumult = require("server/node_modules/tumult");
+const tumult = require("tumult");
 const simplex = new tumult.Simplex2();
 let finalData = [];
 

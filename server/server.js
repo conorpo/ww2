@@ -1,9 +1,9 @@
-const express = require('server/node_modules/express');
+const express = require('express');
 const path = require('path');
 const app = express()
 const http = require('http').Server(app);
-const io = require('server/node_modules/socket.io')(http);
-const map = require("server/map.js")
+const io = require('socket.io')(http);
+const map = require("./map.js")
 
 app.use(express.static(path.join(__dirname, '..' , 'public')));
 
@@ -37,5 +37,5 @@ function updateClients(){
     io.emit("update", {players:players.map(player => ({x:player.x, y:player.y, mx:player.mx, my:player.my})), bullets: bullets});
 }
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 http.listen(port, () => console.log(`Example app listening on port ${port}!`))
