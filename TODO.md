@@ -5,12 +5,31 @@
 
 #### Artwork
 * Create sprites for trees and rocks
+* Create character sprites
+  * Nazi
+  * American
+  * Modern American
+  * Terrorist
+  * Communist
+  * Union
+  * Confederate
+  * Woman
+  * Man
+  * Black Man
+  * British
+  * Patriot
+  * Germ
+  * Spanish
+  * Native Americans
+* Game Logo
 
 #### Game
-*
-
-
-
+* Create round system
+  * Generate New Map Each Round
+* Add bullet impacts
+* Create Health System
+  * Add death
+  * Regeneration
 
 
 ## GAMEPLAY
