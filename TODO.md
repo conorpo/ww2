@@ -1,7 +1,14 @@
 ## TODO
 
+* Move more stuff to cfg objects
+
 #### Networking
-* Make playermovement local, for less latency
+* Make player movement local, for less latency
+* Handle disconnecting, remove players
+* Redo networking
+  * **Prediction**
+  * **Reconciliation**
+  * Interpolation
 
 #### Artwork
 * Create sprites for trees and rocks
@@ -25,7 +32,7 @@
 
 #### Game
 * Create round system
-  * Generate New Map Each Round
+  * Generate New Map Each Round -- DONE
 * Add bullet impacts
 * Create Health System
   * Add death
@@ -44,3 +51,18 @@ Game is seperated into 9 stages whichever team wins 5 rounds or more wins the ga
 7. Americans - Nazis
 8. Americans - Communists
 9. Americans - Terrorists
+
+
+## SCHEDULE
+
+#### Days
+1. **--**
+2. **--**
+3. **--**
+4. **--**
+5. **Rounds and Score**
+6. **Health and Zoom**
+7. Networking
+8. Class and Cleanup Day
+9. UI Elements
+10. Art (Or Collision)
