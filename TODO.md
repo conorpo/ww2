@@ -3,12 +3,14 @@
 * Move more stuff to cfg objects
 
 #### Networking
-* Make player movement local, for less latency
-* Handle disconnecting, remove players
+* **Make player movement local, for less latency**
+* **Handle disconnecting, remove players**
 * Redo networking
   * **Prediction**
   * **Reconciliation**
-  * Interpolation
+  * **Interpolation**
+    * **Bullet Interpolation**
+* Create username system
 
 #### Artwork
 * Create sprites for trees and rocks
@@ -32,11 +34,14 @@
 
 #### Game
 * Create round system
-  * Generate New Map Each Round -- DONE
-* Add bullet impacts
-* Create Health System
+  * **Generate New Map Each Round**
+  * Reset game after 9 rounds
+* **Add bullet impacts**
+* **Create Health System**
   * Add death
-  * Regeneration
+  * **Regeneration**
+  * Create a kill feed
+
 
 
 ## GAMEPLAY
@@ -46,7 +51,7 @@ Game is seperated into 9 stages whichever team wins 5 rounds or more wins the ga
 2. Americans - Sickness
 3. Americans - British
 4. Women - Men
-5. Union - Condeferates
+5. Union - Confederates
 6. Blacks - Whites
 7. Americans - Nazis
 8. Americans - Communists
@@ -62,7 +67,9 @@ Game is seperated into 9 stages whichever team wins 5 rounds or more wins the ga
 4. **--**
 5. **Rounds and Score**
 6. **Health and Zoom**
-7. Networking
-8. Class and Cleanup Day
-9. UI Elements
-10. Art (Or Collision)
+7. **Networking**
+8. **Class and Cleanup Day**
+9. **Bullet collisions**
+10. Player Collisions
+10. UI Elements
+11. Art

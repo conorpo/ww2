@@ -3,21 +3,24 @@ const path = require('path');
 const app = express()
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-const mapService = require("./map.js")
+const mapService = require("./map.js");
+const helper = require("./util.js")
+const uniqid = require("uniqid");
 
 app.use(express.static(path.join(__dirname, '..' , 'public')));
 
 let players = [];
 let bullets = [];
 const cfg = {
-    bS: 12, //bullet Speed
+    bS: 30, //bullet Speed
     bL: 2000/12, //bulletlife in ms
-    tR: 20//tick rate of server
+    tR: 20,//tick rate of server
+    bD: 8,//bulletDamage
+    rL: 60 * 1000 //round length in ms
 }
 let score = [];
 for(let i = 0; i < 9; i++){score.push(null)};
 let round = 1;
-const roundLength =  60 * 1000 //ms
 let roundScore = {bad: 0, good: 0};
 const teams = [
     {bad:"Spanish", good:"Native Americans"},
@@ -35,12 +38,12 @@ let startTime = new Date();
 io.on('connection', socket => {
     socket.emit("map", mapService.map);
     socket.emit("id", socket.id);
-    let player = {"id":socket.id,"x":0,"y":0,"angle":0, "changeID":0};
+    let player = {"id":socket.id,"x":0,"y":0,"angle":0, "changeID":0, "health":100};
     players.push(player);
     socket.on("fire", (angle) => {
         player.angle = angle;
         const bulletAngle = angle;
-        const bullet = {"x": player.x+Math.cos(bulletAngle+Math.PI/8)*40, "y": player.y+Math.sin(bulletAngle+Math.PI/8)*40, "angle": bulletAngle, "dx":Math.cos(bulletAngle)*cfg.bS, "dy":Math.sin(bulletAngle)*cfg.bS, "lifespan": cfg.bL};
+        const bullet = {"id":uniqid.time(),"source":player.id,"x": player.x+Math.cos(bulletAngle+Math.PI/8)*40, "y": player.y+Math.sin(bulletAngle+Math.PI/8)*40, "angle": bulletAngle, "dx":Math.cos(bulletAngle)*cfg.bS, "dy":Math.sin(bulletAngle)*cfg.bS, "lifespan": cfg.bL};
         bullets.push(bullet);
     })
     socket.on('update', updateObj => {
@@ -50,6 +53,10 @@ io.on('connection', socket => {
             player.changeID = updateObj.id;
         }
         player.angle = updateObj.angle;
+    })
+    socket.on("disconnect", () => {
+        let playerIds = players.map(player => player.id);
+        players.splice(playerIds.indexOf(player.id),1);
     })
 })
 
@@ -66,32 +73,53 @@ function updateClients(){
         }
         bullet.x+=bullet.dx;
         bullet.y+=bullet.dy;
+
+        //Check for impact
+        for(let j = 0; j < mapService.map.length; j++){
+            let tree = mapService.map[j];
+            if(helper.checkDistance(tree[0], tree[1], bullet.x, bullet.y, 300)){
+                //Bullet hits tree
+                bullets.splice(i,1);
+                i--;
+                break;
+            }
+        }
+
+        for(let j = 0; j < players.length; j++){
+            let player = players[j];
+            if(player.id == bullet.source){ continue; }
+            if(helper.checkDistance(player.x, player.y, bullet.x, bullet.y, 2000)){
+                //Player got hit
+                bullets.splice(i,1);
+                i--;
+                player.health-=cfg.bD;
+                break;
+            }
+        }
     }
-    bullets.forEach(bullet => {
-        bullet.x+=bullet.dx;
-        bullet.y+=bullet.dy;
-    })
     data.bullets = bullets;
     data.players = players//.map(player => ({x:player.x, y:player.y, mx:player.mx, my:player.my}));   
     let roundTime = new Date() - startTime;
     roundScore.good+=Math.round(Math.random()-0.3);
     roundScore.bad+=Math.round(Math.random()-0.3);
-    if(roundTime > roundLength){
+    if(roundTime > cfg.rL){
         startTime = new Date();
         roundTime = 0;
-        score[round-1] = (Math.random() < 0.5) ? "Good" : "Bad";
         roundScore.good = 0;
         roundScore.bad = 0;
-        round++;
-        mapService.getNewMap();
-        console.log("emit map");
-        io.emit("map", mapService.map);
-        if(round > 9){
-            //restart game
+        if(round == 9){
+            round = 1;
+            score = [];
+            for(let i = 0; i < 9; i++){score.push(null)};
+        }else{
+            score[round-1] = (Math.random() < 0.5) ? "Good" : "Bad";
+            round++;
         }
+        mapService.getNewMap();
+        io.emit("map", mapService.map);
     }
     data.game = {round, score}
-    data.round = {progress: roundTime, score: roundScore, teams: teams[round-1], length: roundLength};
+    data.round = {progress: roundTime, score: roundScore, teams: teams[round-1], length: cfg.rL};
     io.emit("update", data);
 }
 
