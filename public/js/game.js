@@ -43,22 +43,32 @@ class Game {
     }
 
     update(){
-        let change = {}
-        change.id = this.changes.length + 1;
-        this.player.y += change.dy = (heldInputs.s-heldInputs.w);
-        this.player.x += change.dx = (heldInputs.d-heldInputs.a);
-        change.angle = this.player.angle = this.calculateAngle();
-        socket.emit('update', change);
-        if(change.dy != 0 || change.dx != 0){
-            this.changes.push(change);
+        if(this.serverPlayer.alive){
+            let change = {}
+            change.id = this.changes.length + 1;
+            change.dy = (heldInputs.s-heldInputs.w);
+            change.dx = (heldInputs.d-heldInputs.a);
+            change.angle = this.player.angle = this.calculateAngle();
+            if(change.dy != 0 || change.dx != 0){
+                if(this.canMove(change)){
+                    this.player.x += change.dx;
+                    this.player.y += change.dy;
+                    this.changes.push(change);
+                }else{
+                    change.dy = 0
+                    change.dx = 0;
+                }
+            }
+            socket.emit('update', change);
         }
                 
         this.reconcile(); //Makes sure server data is same as client data
  
-        const healthChange = this.player.health - this.serverPlayer.health;
-        this.damage(healthChange);
-        if(this.regenerating && this.player.health < 100){ this.player.health+=1 }
-
+        if(this.serverPlayer.alive){
+            const healthChange = this.player.health - this.serverPlayer.health;
+            this.damage(healthChange);
+            if(this.regenerating && this.player.health < 100){ this.player.health+=1 }
+        }
     }
 
     fire(){
@@ -76,6 +86,24 @@ class Game {
             this.player.ammo = 20;
             this.reloading = false;
         }, 3000)
+    }
+
+    canMove(change){
+        let newPos = {
+            x: this.player.x + change.dx,
+            y: this.player.y + change.dy
+        }
+        for(let i = 0; i < this.map.length ; i++){
+            const tree = this.map[i];
+            if(this.dCheck(tree[0], tree[1], newPos.x, newPos.y, 1500)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    dCheck(xa,ya,xb,yb, dSquared){
+        return (((xb-xa)**2+(yb-ya)**2) <= dSquared);
     }
 
     lerp(old, current){ //progress in milliseconds
@@ -99,12 +127,13 @@ class Game {
     
 
     reconcile(){
-        if(this.serverPlayer.changeID < this.changes.length){
+        if(this.serverPlayer.changeID <= this.changes.length){
             let untrackedChanges = this.changes.slice(this.serverPlayer.changeID, this.changes.length)
             if(untrackedChanges.length == 0){
-                changes = [];
-                if(this.player.x != this.serverPlayer.x || this.player.y != this.serverPlayer.y){;
-                    console.log("final mismatch");
+                this.changes = [];
+                if(this.player.x != this.serverPlayer.x || this.player.y != this.serverPlayer.y){
+                    console.log("Final mismatch");
+                    this.serverPlayer.changeID = 9999;
                     this.player.x = this.serverPlayer.x;
                     this.player.y = this.serverPlayer.y;
                 }
@@ -113,6 +142,8 @@ class Game {
                 const xSync = (this.player.x == this.serverPlayer.x + changeSum.dx);
                 const ySync = (this.player.y == this.serverPlayer.y + changeSum.dy);
                 if(!xSync || !ySync){
+                    this.changes = [];
+                    this.serverPlayer.changeID = 9999;
                     console.log("mismatch");
                     this.player.x = this.serverPlayer.x;
                     this.player.y = this.serverPlayer.y; 
@@ -122,8 +153,8 @@ class Game {
     }
 
     damage(amount){
-        if(this.player.health - amount < 0){
-            //Die
+        if(this.player.health - amount <= 0){
+    
         }else{
             this.player.health-=amount;
             this.regenerating  = false;
@@ -156,9 +187,14 @@ socket.on("update", gameData => {
     game.oldPlayerIds = game.oldPlayers.map(player => player.id);
 
     game.players = gameData.players;
-
+    
     const playerIds = game.players.map(player => player.id);
     game.serverPlayer = game.players.splice(playerIds.indexOf(game.player.id),1)[0];
+    if(!game.serverPlayer.alive){
+        game.player.health = 100;
+        game.player.x = 0;
+        game.player.y = 0;
+    }
 
     game.oldBullets = game.bullets;
     game.oldBulletIds = game.oldBullets.map(bullet => bullet.id);

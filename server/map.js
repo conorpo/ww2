@@ -10,7 +10,7 @@ function getNewMap(){
         const y = Math.floor(Math.random()*10000);
         const density = (simplex.gen(x/10000*3,y/10000*3) + 1)/2;
         if(Math.random()<density-0.6){
-            map.push([x-5000,y-5000]);
+            map.push([x-5000,y-5000,Math.floor(Math.random()*3)]);
         }
     }
 }

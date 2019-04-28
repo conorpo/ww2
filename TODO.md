@@ -10,7 +10,7 @@
   * **Reconciliation**
   * **Interpolation**
     * **Bullet Interpolation**
-* Create username system
+* **Create username system**
 
 #### Artwork
 * Create sprites for trees and rocks
@@ -35,10 +35,11 @@
 #### Game
 * Create round system
   * **Generate New Map Each Round**
-  * Reset game after 9 rounds
+  * **Reset game after 9 rounds**
 * **Add bullet impacts**
 * **Create Health System**
-  * Add death
+  * **Add death**
+  * Create Death Screen
   * **Regeneration**
   * Create a kill feed
 
@@ -57,6 +58,12 @@ Game is seperated into 9 stages whichever team wins 5 rounds or more wins the ga
 8. Americans - Communists
 9. Americans - Terrorists
 
+## Bugs to fix
+
+* Player input dt
+* Bullets go towards mouse
+* Bullet - Player collision rework
+* Limit zoom
 
 ## SCHEDULE
 
@@ -70,6 +77,8 @@ Game is seperated into 9 stages whichever team wins 5 rounds or more wins the ga
 7. **Networking**
 8. **Class and Cleanup Day**
 9. **Bullet collisions**
-10. Player Collisions
-10. UI Elements
-11. Art
+10. Teams, Scoring, and Winning
+11. Player Collisions
+12. UI Elements
+13. Art
+14. Clean Everything Up

@@ -1,8 +1,19 @@
-const playerImg = document.createElement("IMG");
-playerImg.src = "assets/player_temp.png";
+const goodImg = document.createElement("IMG");
+goodImg.src = "assets/blue.svg";
 
-const treeImg = document.createElement("IMG");
-treeImg.src ="assets/tree_temp.png";
+const badImg = document.createElement("IMG");
+badImg.src ="assets/red.svg";
+
+const treeImgs = [];
+treeImgs[0] = document.createElement("IMG");
+treeImgs[1] = document.createElement("IMG");
+treeImgs[2] = document.createElement("IMG");
+treeImgs[0].src = "assets/tree0.svg";
+treeImgs[1].src = "assets/tree1.svg";
+treeImgs[2].src = "assets/tree2.svg";
+
+
+
 
 ctx.fillStyle = "green";
 ctx.strokeStyle = "red";
@@ -24,7 +35,9 @@ function draw(){
 
         drawPlayer();
         for(let i = 0; i < game.players.length; i++){
-            drawEnemy(game.players[i]);
+            if(game.players[i].alive){
+                drawEnemy(game.players[i]);
+            }
         }
 
         game.bullets.forEach(bullet => {
@@ -79,7 +92,7 @@ function drawMap(){
     ctx.translate(-game.player.x,-game.player.y)
     game.map.forEach(object => {
         if(Math.abs(object[0]-game.player.x)-100 < width/(2*game.zoom) && Math.abs(object[1]-game.player.y)-100 < height/(2*game.zoom)){
-            ctx.drawImage(treeImg, object[0] - 50 , object[1] - 50, 100,100);
+            ctx.drawImage(treeImgs[object[2]], object[0] - 50 , object[1] - 50);
         }
     })
     ctx.stroke();
@@ -88,9 +101,13 @@ function drawMap(){
 
 function drawPlayer(){
     ctx.save();
-        ctx.scale(0.4,0.4);
+        ctx.scale(0.23,0.23);
         ctx.rotate(game.player.angle);
-        ctx.drawImage(playerImg, -105 , -105);
+        if(game.serverPlayer.team == "Good"){
+            ctx.drawImage(goodImg,-125,-125);
+        }else{
+            ctx.drawImage(badImg,-125, -125);
+        }
     ctx.restore();
 }
 
@@ -101,9 +118,13 @@ function drawEnemy(person){
             const oldVersion = game.oldPlayers[index];
             const lerpedPosition = game.lerp(oldVersion, person);
             ctx.translate(lerpedPosition.x-game.player.x, + lerpedPosition.y-game.player.y);
-            ctx.scale(0.4,0.4);
+            ctx.scale(0.23,0.23);
             ctx.rotate(lerpedPosition.angle);
-            ctx.drawImage(playerImg, -105 , -105);
+            if(person.team == "Good"){
+                ctx.drawImage(goodImg, -125 , -125);
+            }else{
+                ctx.drawImage(badImg, -125 , -125);
+            }
         }else{
 
         }
