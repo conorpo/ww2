@@ -13,23 +13,23 @@
 * **Create username system**
 
 #### Artwork
-* Create sprites for trees and rocks
+* Create sprites for **trees** and rocks
 * Create character sprites
-  * Nazi
-  * American
-  * Modern American
+  * **Nazi**
+  * **American**
+  * **Modern American**
   * Terrorist
-  * Communist
-  * Union
-  * Confederate
-  * Woman
-  * Man
-  * Black Man
-  * British
-  * Patriot
-  * Germ
-  * Spanish
-  * Native Americans
+  * **Communist**
+  * **Union**
+  * **Confederate**
+  * **Woman**
+  * **Man**
+  * **Black Man**
+  * **British**
+  * **Patriot**
+  * **Germ**
+  * **Spanish**
+  * **Native Americans**
 * Game Logo
 
 #### Game
@@ -49,8 +49,8 @@
 
 Game is seperated into 9 stages whichever team wins 5 rounds or more wins the game
 1. Native Americans - Spanish
-2. Americans - Sickness
-3. Americans - British
+2. Settlers - Sickness
+3. Patriots - British
 4. Women - Men
 5. Union - Confederates
 6. Blacks - Whites
@@ -65,6 +65,11 @@ Game is seperated into 9 stages whichever team wins 5 rounds or more wins the ga
 * Bullet - Player collision rework
 * Limit zoom
 
+## Optimization
+
+* Draw low-res png of trees and rocks at certain zoom level
+
+
 ## SCHEDULE
 
 #### Days
@@ -77,8 +82,8 @@ Game is seperated into 9 stages whichever team wins 5 rounds or more wins the ga
 7. **Networking**
 8. **Class and Cleanup Day**
 9. **Bullet collisions**
-10. Teams, Scoring, and Winning
-11. Player Collisions
+10. **Teams, Scoring**, and Winning
+11. *Player Collisions*
 12. UI Elements
 13. Art
 14. Clean Everything Up
