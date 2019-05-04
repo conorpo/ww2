@@ -1,17 +1,22 @@
-const goodImg = document.createElement("IMG");
-goodImg.src = "assets/blue.svg";
+let treeImgs = [];
+treeImgs[0] = loadImage("tree0.svg");
+treeImgs[1] = loadImage("tree1.svg");
+treeImgs[2] = loadImage("tree2.svg");
 
-const badImg = document.createElement("IMG");
-badImg.src ="assets/red.svg";
+let rockImgs = [];
+rockImgs[0] = loadImage("rock0.svg");
+rockImgs[1] = loadImage("rock1.svg");
+rockImgs[2] = loadImage("rock2.svg");
 
-const treeImgs = [];
-treeImgs[0] = document.createElement("IMG");
-treeImgs[1] = document.createElement("IMG");
-treeImgs[2] = document.createElement("IMG");
-treeImgs[0].src = "assets/tree0.svg";
-treeImgs[1].src = "assets/tree1.svg";
-treeImgs[2].src = "assets/tree2.svg";
 
+
+let playerImgs = [];
+for(let i = 1; i < 10 ; i++){
+  playerImgs.push({
+    "good":loadImage("good"+i+".png"),
+    "bad":loadImage("bad"+i+".png")
+  })
+}
 
 
 
@@ -33,6 +38,7 @@ function draw(){
 
         drawBackground();
 
+        ctx.fillStyle = "#000000"
         drawPlayer();
         for(let i = 0; i < game.players.length; i++){
             if(game.players[i].alive){
@@ -82,6 +88,7 @@ function drawBackground(){
     ctx.save();
     ctx.translate(-game.player.x,-game.player.y)
     ctx.beginPath();
+    ctx.lineWidth = 30;
     ctx.rect(-5004,-5004,10008,10008);
     ctx.stroke();
     ctx.restore();
@@ -92,21 +99,25 @@ function drawMap(){
     ctx.translate(-game.player.x,-game.player.y)
     game.map.forEach(object => {
         if(Math.abs(object[0]-game.player.x)-100 < width/(2*game.zoom) && Math.abs(object[1]-game.player.y)-100 < height/(2*game.zoom)){
-            ctx.drawImage(treeImgs[object[2]], object[0] - 50 , object[1] - 50);
+            if(object[3]){
+                ctx.drawImage(rockImgs[object[2]], object[0] - 50 , object[1] - 50);
+            }else{
+                ctx.drawImage(treeImgs[object[2]], object[0] - 50 , object[1] - 50);
+            }
         }
     })
-    ctx.stroke();
     ctx.restore();
 }
 
 function drawPlayer(){
     ctx.save();
-        ctx.scale(0.23,0.23);
+        ctx.fillText(game.serverPlayer.username, 0, -60);
+        ctx.scale(0.3,0.3);
         ctx.rotate(game.player.angle);
         if(game.serverPlayer.team == "Good"){
-            ctx.drawImage(goodImg,-125,-125);
+            ctx.drawImage(playerImgs[game.round.number-1].good,-125,-125);
         }else{
-            ctx.drawImage(badImg,-125, -125);
+            ctx.drawImage(playerImgs[game.round.number-1].bad,-125, -125);
         }
     ctx.restore();
 }
@@ -118,12 +129,13 @@ function drawEnemy(person){
             const oldVersion = game.oldPlayers[index];
             const lerpedPosition = game.lerp(oldVersion, person);
             ctx.translate(lerpedPosition.x-game.player.x, + lerpedPosition.y-game.player.y);
-            ctx.scale(0.23,0.23);
+            ctx.fillText(person.username, 0, -60);           
+            ctx.scale(0.3,0.3);
             ctx.rotate(lerpedPosition.angle);
             if(person.team == "Good"){
-                ctx.drawImage(goodImg, -125 , -125);
+                ctx.drawImage(playerImgs[game.round.number-1].good, -125 , -125);
             }else{
-                ctx.drawImage(badImg, -125 , -125);
+                ctx.drawImage(playerImgs[game.round.number-1].bad, -125 , -125);
             }
         }else{
 
@@ -207,6 +219,21 @@ function drawUI(){
         const scoreString = game.round.teams.good + " : " + game.round.score.good + " - " + game.round.score.bad + " : " + game.round.teams.bad;
         ctx.fillText(scoreString, width/2, 100);
 
+
+        //Draw killfeed
+        for(let i = 0; i < game.killFeed.length; i++){
+            const kill = game.killFeed[i];
+            ctx.fillStyle = "#BBBBBB";
+            ctx.fillRect(width-210,220+i*40,200,30);
+            ctx.fillStyle = "black";
+            ctx.fillText("killed",width-110,235+i*40);
+            ctx.fillStyle = (kill.s.team == "Good") ? "blue" : "red";
+            ctx.textAlign="right";
+            ctx.fillText(kill.s.name,width-135,235+i*40)
+            ctx.fillStyle = (kill.t.team == "Good") ? "blue" : "red";
+            ctx.textAlign="left";
+            ctx.fillText(kill.t.name,width-85,235+i*40)
+        }
 
     ctx.restore();
 }

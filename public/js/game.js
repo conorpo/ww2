@@ -40,8 +40,10 @@ class Game {
 
         this.regenerating = false;
         this.regenTimeout = null;
-    }
 
+        this.killFeed = [];
+    }
+    
     update(){
         if(this.serverPlayer.alive){
             let change = {}
@@ -93,9 +95,13 @@ class Game {
             x: this.player.x + change.dx,
             y: this.player.y + change.dy
         }
+        if(newPos.x < -5000 || newPos.x > 5000 || newPos.y < -5000 || newPos.y > 5000){
+            return false;
+        }
         for(let i = 0; i < this.map.length ; i++){
-            const tree = this.map[i];
-            if(this.dCheck(tree[0], tree[1], newPos.x, newPos.y, 1500)){
+            const object = this.map[i];
+            const distance = (object[3]) ? 5000 : 1500;
+            if(this.dCheck(object[0], object[1], newPos.x, newPos.y, distance)){
                 return false;
             }
         }
@@ -206,6 +212,7 @@ socket.on("update", gameData => {
     game.round.teams = gameData.round.teams;
     game.round.progress = gameData.round.progress;
     game.round.length = gameData.round.length;
+    game.killFeed = gameData.killFeed;
 
     game.interpolationLength = new Date() - game.interpolationStartTime;
     game.interpolationStartTime = new Date();

@@ -26,9 +26,9 @@ canvas.addEventListener("mouseup", (evt) => {
 })
 canvas.addEventListener("wheel",(evt) => {
     const scroll = evt.deltaY;
-    if(scroll > 0){
+    if(scroll > 0 && game.zoom > 0.6){
         game.zoom/=game.cfg.zoomRate;
-    }else if(scroll < 0){
+    }else if(scroll < 0 && game.zoom < 4){
         game.zoom*=game.cfg.zoomRate;
     }
 
@@ -60,6 +60,13 @@ document.addEventListener("keyup", (evt) => {
         pressInputs[key](); //Calls corresponding function
     }
 })
+
+function loadImage(url){
+    const image = document.createElement("img");
+    image.src = "assets/"+url;
+    return image;
+  }
+
 
 function deparam(uri){
     if(uri === undefined){

@@ -13,8 +13,8 @@
 * **Create username system**
 
 #### Artwork
-* Create sprites for trees and rocks
-* Create character sprites
+* Create sprites for **trees** and rocks
+* **Create character sprites**
   * Nazi
   * American
   * Modern American
@@ -41,29 +41,33 @@
   * **Add death**
   * Create Death Screen
   * **Regeneration**
-  * Create a kill feed
+  * **Create a kill feed**
 
 
 
 ## GAMEPLAY
 
-Game is seperated into 9 stages whichever team wins 5 rounds or more wins the game
-1. Native Americans - Spanish
-2. Americans - Sickness
-3. Americans - British
-4. Women - Men
-5. Union - Confederates
-6. Blacks - Whites
-7. Americans - Nazis
-8. Americans - Communists
-9. Americans - Terrorists
+**Game is seperated into 9 stages** whichever team wins 5 rounds or more wins the game
+1. **Native Americans - Spanish**
+2. **Americans - Sickness**
+3. **Americans - British**
+4. **Women - Men**
+5. **Union - Confederates**
+6. **Blacks - Whites**
+7. **Americans - Nazis**
+8. **Americans - Communists**
+9. **Americans - Terrorists**
 
 ## Bugs to fix
 
 * Player input dt
 * Bullets go towards mouse
 * Bullet - Player collision rework
-* Limit zoom
+* **Limit zoom**
+
+## Optimzation
+
+* Offscreen canvas the minimap
 
 ## SCHEDULE
 
@@ -77,8 +81,8 @@ Game is seperated into 9 stages whichever team wins 5 rounds or more wins the ga
 7. **Networking**
 8. **Class and Cleanup Day**
 9. **Bullet collisions**
-10. Teams, Scoring, and Winning
-11. Player Collisions
-12. UI Elements
-13. Art
+10. **Teams, Scoring**, and Winning
+11. **Player Collisions**
+12. **UI Elements**
+13. **Art**
 14. Clean Everything Up
