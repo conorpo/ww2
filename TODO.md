@@ -15,21 +15,21 @@
 #### Artwork
 * Create sprites for **trees** and rocks
 * **Create character sprites**
-  * Nazi
-  * American
-  * Modern American
-  * Terrorist
-  * Communist
-  * Union
-  * Confederate
-  * Woman
-  * Man
-  * Black Man
-  * British
-  * Patriot
-  * Germ
-  * Spanish
-  * Native Americans
+  * **Nazi**
+  * **American**
+  * **Modern American**
+  * **Terrorist**
+  * **Communist**
+  * **Union**
+  * **Confederate**
+  * **Woman**
+  * **Man**
+  * **Black Man**
+  * **British**
+  * **Patriot**
+  * **Germ**
+  * **Spanish**
+  * **Native Americans**
 * Game Logo
 
 #### Game
@@ -68,6 +68,11 @@
 ## Optimzation
 
 * Offscreen canvas the minimap
+
+## Optimization
+
+* Draw low-res png of trees and rocks at certain zoom level
+
 
 ## SCHEDULE
 
