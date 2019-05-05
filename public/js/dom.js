@@ -26,7 +26,7 @@ canvas.addEventListener("mouseup", (evt) => {
 })
 canvas.addEventListener("wheel",(evt) => {
     const scroll = evt.deltaY;
-    if(scroll > 0 && game.zoom > 0.6){
+    if(scroll > 0 && game.zoom > 1){
         game.zoom/=game.cfg.zoomRate;
     }else if(scroll < 0 && game.zoom < 4){
         game.zoom*=game.cfg.zoomRate;

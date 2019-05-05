@@ -13,7 +13,7 @@
 * **Create username system**
 
 #### Artwork
-* Create sprites for **trees** and rocks
+* Create sprites for **trees** and **rocks**
 * **Create character sprites**
   * **Nazi**
   * **American**
@@ -39,7 +39,7 @@
 * **Add bullet impacts**
 * **Create Health System**
   * **Add death**
-  * Create Death Screen
+  * **Create Death Screen**
   * **Regeneration**
   * **Create a kill feed**
 
@@ -60,18 +60,14 @@
 
 ## Bugs to fix
 
-* Player input dt
+* **dwPlayer input dt**
 * Bullets go towards mouse
 * Bullet - Player collision rework
 * **Limit zoom**
 
 ## Optimzation
 
-* Offscreen canvas the minimap
-
-## Optimization
-
-* Draw low-res png of trees and rocks at certain zoom level
+* **Offscreen canvas the minimap**
 
 
 ## SCHEDULE

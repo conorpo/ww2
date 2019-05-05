@@ -18,6 +18,15 @@ for(let i = 1; i < 10 ; i++){
   })
 }
 
+const bulletImg = loadImage("bullet.svg");
+const arrowImg = loadImage("arrow.svg")
+
+const offCanv = {
+    grid: document.createElement("canvas"),
+    minimap: document.createElement("canvas"),
+    fui: document.createElement("canvas"),
+    bui: document.createElement("canvas")
+}
 
 
 ctx.fillStyle = "green";
@@ -26,20 +35,110 @@ ctx.textAlign = "center";
 ctx.textBaseline = "middle";
 ctx.font = "18px Arial";
 
+(function(){
+    offCanv.gridSize = 200;
+    offCanv.grid.width = width + offCanv.gridSize*2.5;
+    offCanv.grid.height = height + offCanv.gridSize*2.5;
+    const gCtx = offCanv.grid.getContext("2d");
+    
+    gCtx.fillStyle = "#248525";
+    gCtx.fillRect(0,0,width+offCanv.gridSize*2.5,height+offCanv.gridSize*2.5);
+    gCtx.strokeStyle = "#1F5F1F"
+    gCtx.lineWidth = 10;
+    for(let x = (width/2)%offCanv.gridSize; x < width + offCanv.gridSize*2.5; x+=offCanv.gridSize){
+        gCtx.beginPath();
+        gCtx.moveTo(x,0);
+        gCtx.lineTo(x,offCanv.grid.height);
+        gCtx.stroke();
+    }
+    for(let y = (height/2)%offCanv.gridSize; y < height + offCanv.gridSize*2.5; y+=offCanv.gridSize){
+        gCtx.beginPath();
+        gCtx.moveTo(0,y);
+        gCtx.lineTo(offCanv.grid.width,y);
+        gCtx.stroke();
+    }
+
+    //Minimap
+    offCanv.minimap.width = 200;
+    offCanv.minimap.height = 200;
+    offCanv.mCtx = offCanv.minimap.getContext("2d");
+    offCanv.mCtx.strokeStyle = "white";
+    drawMinimap()
+
+    offCanv.fui.width = offCanv.bui.width = width;
+    offCanv.fui.height = offCanv.bui.height = height;
+    const bCtx = offCanv.bui.getContext("2d");
+    const fCtx = offCanv.fui.getContext("2d");
+
+
+    bCtx.fillStyle = "#CCCCCC";
+    bCtx.fillRect(20,20,200,55);
+
+    bCtx.lineWidth = 4;
+    bCtx.fillStyle = "grey";
+    bCtx.fillRect(width/2 - 450, 20 , 900, 40);
+
+    bCtx.fillStyle = "#DDDDDD";
+    bCtx.strokeStyle = "black";
+    bCtx.lineWidth = 3;
+    bCtx.beginPath();
+    bCtx.rect(width/2 - 150, 68, 300, 24);
+    bCtx.stroke();
+    bCtx.fill();
+    //Health Box
+    fCtx.strokeStyle = "black";
+    fCtx.beginPath();
+    fCtx.rect(25,25,190,20);
+    fCtx.stroke();
+    //Ammo Box
+    fCtx.beginPath();
+    fCtx.rect(25,50,190,20)
+    fCtx.stroke();
+
+    fCtx.lineWidth = 2;
+    fCtx.strokeStyle = "white";
+    fCtx.beginPath();
+    fCtx.rect(width/2 - 450, 20 , 900, 40);
+    fCtx.stroke();
+
+    for(let i = 0; i < 9; i++){
+        fCtx.beginPath();
+        fCtx.moveTo(width/2 - (100 * (4-i)) + 50, 20);
+        fCtx.lineTo(width/2 - (100 * (4-i)) + 50, 60);
+        fCtx.stroke();
+    }
+})();
+
+function drawMinimap(){
+    offCanv.mCtx.fillStyle = "black";
+    offCanv.mCtx.beginPath();
+    offCanv.mCtx.rect(0, 0, 200, 200);
+    offCanv.mCtx.fill();
+    offCanv.mCtx.stroke();
+    offCanv.mCtx.fillStyle = "#CCCCCC";
+    game.map.forEach(object => {
+        offCanv.mCtx.fillRect(object[0]/50 + 99,object[1]/50+99, 2 , 2)
+    })
+}
 
 function draw(){
-    ctx.fillRect(0,0,width,height);
     ctx.save();
+        
+      
         ctx.translate(width/2, height/2);
+        drawBackground();
+
 
         ctx.scale(game.zoom,game.zoom);
+        ctx.drawImage(offCanv.grid,(-game.player.x%offCanv.gridSize)-offCanv.gridSize*1.25-width/2,(-game.player.y%offCanv.gridSize)-offCanv.gridSize*1.25-height/2);
 
         game.update();
 
-        drawBackground();
-
         ctx.fillStyle = "#000000"
-        drawPlayer();
+
+        if(game.serverPlayer.alive){
+            drawPlayer();
+        }
         for(let i = 0; i < game.players.length; i++){
             if(game.players[i].alive){
                 drawEnemy(game.players[i]);
@@ -54,39 +153,51 @@ function draw(){
 
         ctx.scale(1/game.zoom,1/game.zoom);
         drawUI();
+
         if(game.round.progress > game.round.length-(3*1000) || (game.round.number > 1 && game.round.progress < 7 * 1000)){
             drawFade();
+        }else if(!game.serverPlayer.alive){
+            drawDeath();
         }
+
     ctx.restore();
 
     window.requestAnimationFrame(draw);
 
 }
 
+function drawDeath(){
+    ctx.save();
+    ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+    ctx.fillRect(-width/2,-height/2,width,height);
+    ctx.fillStyle = "#DD3333";
+    ctx.font = "60px Arial";
+    ctx.fillText("You Died",0,0);
+    ctx.restore();
+}
+
 
 function drawBullet(bullet){
     ctx.save();
-
+        const drawnImg = (game.round.number == 1 && bullet.team == "Good") ? arrowImg : bulletImg;
         const index = game.oldBulletIds.indexOf(bullet.id);
         if(index != -1){
             const oldVersion = game.oldBullets[index];
             const lerpedPosition = game.lerp(oldVersion, bullet);
             ctx.translate(lerpedPosition.x-game.player.x,lerpedPosition.y-game.player.y)
             ctx.rotate(bullet.angle);
-            ctx.fillStyle="coral";
-            ctx.fillRect(0,0,20,5);
+            ctx.drawImage(drawnImg,0,0);
         }else{
             ctx.translate(bullet.x-game.player.x,bullet.y-game.player.y)
             ctx.rotate(bullet.angle);
-            ctx.fillStyle="coral";
-            ctx.fillRect(0,0,20,5);
+            ctx.drawImage(drawnImg,0,0);
         }
     ctx.restore();
 }
 
 function drawBackground(){
     ctx.save();
-    ctx.translate(-game.player.x,-game.player.y)
+    ctx.translate(-game.player.x,-game.player.y);
     ctx.beginPath();
     ctx.lineWidth = 30;
     ctx.rect(-5004,-5004,10008,10008);
@@ -147,8 +258,7 @@ function drawEnemy(person){
 function drawUI(){
     ctx.save();
         ctx.translate(-width/2,-height/2)
-        ctx.fillStyle = "#CCCCCC";
-        ctx.fillRect(20,20,200,55);
+        ctx.drawImage(offCanv.bui,0,0);
         //Health Bar
         ctx.fillStyle = " #cb433c";
         ctx.fillRect(25,25,190*(game.player.health/game.player.maxhealth),20);
@@ -164,35 +274,13 @@ function drawUI(){
             ctx.fillText(game.player.ammo, 120, 60);
         }
 
-        //Health Box
-        ctx.strokeStyle = "black";
-        ctx.beginPath();
-        ctx.rect(25,25,190,20);
-        ctx.stroke();
-        //Ammo Box
-        ctx.beginPath();
-        ctx.rect(25,50,190,20)
-        ctx.stroke();
         //Minimap
-        ctx.fillStyle = "black";
-        ctx.beginPath();
-        ctx.rect(width-210, 10, 200, 200);
-        ctx.fill();
-        ctx.strokeStyle = "white";
-        ctx.fillStyle = "#CCCCCC";
-        ctx.beginPath();
-        ctx.rect(width-210, 10, 200, 200);
-        ctx.stroke();
-        game.map.forEach(object => {
-            ctx.fillRect(object[0]/50+width-110-1,object[1]/50+110-1, 2 , 2)
-        })
+        ctx.drawImage(offCanv.minimap, width-210, 10);
         ctx.fillStyle = "#FF0000"
         ctx.fillRect(game.player.x/50 + width - 110 - 2, game.player.y/50 + 110 -2, 4, 4)
 
+        ctx.strokeStyle = "white";
         //Round Info
-        ctx.lineWidth = 4;
-        ctx.fillStyle = "grey";
-        ctx.fillRect(width/2 - 450, 20 , 900, 40);
         for(let i = 0; i < game.score.length; i++){
             outcome =  game.score[i];
             if(outcome != null){
@@ -206,18 +294,12 @@ function drawUI(){
                 ctx.fillStyle = "orange";
                 ctx.fillRect(width/2 - (100 * (4-i)) -50, 20, game.round.progress*100/game.round.length , 40);
             }
-            ctx.beginPath();
-            ctx.moveTo(width/2 - (100 * (4-i)) + 50, 20);
-            ctx.lineTo(width/2 - (100 * (4-i)) + 50, 60);
-            ctx.stroke();
         }
-        ctx.beginPath();
-        ctx.rect(width/2 - 450, 20 , 900, 40);
-        ctx.stroke();
 
         //Current 
+        ctx.fillStyle = "black";
         const scoreString = game.round.teams.good + " : " + game.round.score.good + " - " + game.round.score.bad + " : " + game.round.teams.bad;
-        ctx.fillText(scoreString, width/2, 100);
+        ctx.fillText(scoreString, width/2, 80);
 
 
         //Draw killfeed
@@ -235,18 +317,24 @@ function drawUI(){
             ctx.fillText(kill.t.name,width-85,235+i*40)
         }
 
+        ctx.drawImage(offCanv.fui,0,0);
+
     ctx.restore();
 }
 
 function drawFade(){
     ctx.save();
-    ctx.translate(-width/2,-height/2);
     ctx.fillStyle = "black";
+    ctx.font = "60px Arial"
     if(game.round.progress > game.round.length - (3 * 1000)){
         ctx.globalAlpha = 1-((game.round.length-game.round.progress)/(3*1000));
+        ctx.fillRect(-width/2,-height/2,width,height);
     }else{
-        ctx.globalAlpha = Math.min(1, 1-((game.round.progress-(4 * 1000))/(3*1000)))
+        ctx.globalAlpha = Math.min(1, 1-((game.round.progress-(4 * 1000))/(3*1000)));
+        ctx.fillRect(-width/2,-height/2,width,height);
+        const winString = game.score[game.round.number-2] + " win round " + (game.round.number-1);
+        ctx.fillStyle = (game.score[game.round.number-2] == "Good") ? "blue" : "red";
+        ctx.fillText(winString, 0, 0);
     }
-    ctx.fillRect(0,0,width,height);
     ctx.restore();
 }

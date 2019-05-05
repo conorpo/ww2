@@ -42,14 +42,19 @@ class Game {
         this.regenTimeout = null;
 
         this.killFeed = [];
+
+        this.startTime = new Date();
     }
     
     update(){
+        const newTime = new Date() - this.startTime;
+        this.startTime = new Date();
+
         if(this.serverPlayer.alive){
             let change = {}
             change.id = this.changes.length + 1;
-            change.dy = (heldInputs.s-heldInputs.w);
-            change.dx = (heldInputs.d-heldInputs.a);
+            change.dy = (heldInputs.s-heldInputs.w) * newTime/20;
+            change.dx = (heldInputs.d-heldInputs.a) * newTime/20;
             change.angle = this.player.angle = this.calculateAngle();
             if(change.dy != 0 || change.dx != 0){
                 if(this.canMove(change)){
@@ -225,6 +230,7 @@ socket.on("id", id => {
 
 socket.on("map", serverMap => {
     game.map = serverMap;
+    drawMinimap();
 })
 
 

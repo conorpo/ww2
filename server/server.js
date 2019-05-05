@@ -16,7 +16,7 @@ const cfg = {
     bL: 2000/12, //bulletlife in ms
     tR: 20,//tick rate of server
     bD: 8,//bulletDamage
-    rL: 60 * 1000 //round length in ms
+    rL: 3 * 60 * 1000 //round length in ms
 }
 let score = [];
 for(let i = 0; i < 9; i++){score.push(null)};
@@ -63,7 +63,9 @@ io.on('connection', socket => {
             if(!player.alive){ return; }
             player.angle = angle;
             const bulletAngle = angle;
-            const bullet = {"id":uniqid.time(),"source":player.username,"team":player.team,"x": player.x+Math.cos(bulletAngle+Math.PI/8)*40, "y": player.y+Math.sin(bulletAngle+Math.PI/8)*40, "angle": bulletAngle, "dx":Math.cos(bulletAngle)*cfg.bS, "dy":Math.sin(bulletAngle)*cfg.bS, "lifespan": cfg.bL};
+            const bullet = {"id":uniqid.time(),"source":player.username,"team":player.team,"x": player.x,"y": player.y, "angle": bulletAngle, "dx":Math.cos(bulletAngle)*cfg.bS, "dy":Math.sin(bulletAngle)*cfg.bS, "lifespan": cfg.bL};
+            bullet.x -= bullet.dy/2;
+            bullet.y += bullet.dx/2
             bullets.push(bullet);
         })
         socket.on('update', updateObj => {
