@@ -62,8 +62,13 @@
 
 * **dwPlayer input dt**
 * Bullets go towards mouse
-* Bullet - Player collision rework
 * **Limit zoom**
+* Random Spawning
+* Don't spawn in a tree
+* Player Locations
+* New Border
+* Better round screen
+
 
 ## Optimzation
 
