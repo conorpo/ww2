@@ -44,11 +44,19 @@ class Game {
         this.killFeed = [];
 
         this.startTime = new Date();
+        this.lastRound = 1;
     }
     
     update(){
         const newTime = new Date() - this.startTime;
         this.startTime = new Date();
+
+        if(this.round.number != this.lastRound){
+            setTimeout(() => {
+                openStoryBox(this.round.number)
+            },6000);
+        }
+        this.lastRound = this.round.number;
 
         if(this.serverPlayer.alive){
             let change = {}

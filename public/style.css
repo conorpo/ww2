@@ -9,3 +9,35 @@ canvas  {
     background-color:black;
 }
 
+div {
+    position: absolute;
+    background-color: white;
+    border-radius: 10px;
+    //display: none;
+    z-index: 3;
+    top: 30vh;
+    width: 30vw;
+    left: 35vw;
+    font-family: 'Raleway', sans-serif;
+    padding: 15px;
+    padding-top:0px;
+}
+
+#storyHead {
+    float:left;
+    width:50%;
+}
+
+button {
+    float: right;
+    width:10%;
+    margin-top:15px;
+    height:30px;
+    background-color: #EEEEEE;
+    border:solid #CCCCCC;
+}
+
+#storyBody {
+    clear:both;
+}
+
