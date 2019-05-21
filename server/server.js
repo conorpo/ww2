@@ -16,7 +16,7 @@ const cfg = {
     bL: 2000/12, //bulletlife in ms
     tR: 20,//tick rate of server
     bD: 8,//bulletDamage
-    rL: 20 * 1000 //round length in ms
+    rL: 3 * 60 * 1000 //round length in ms
 }
 let score = [];
 for(let i = 0; i < 9; i++){score.push(null)};
